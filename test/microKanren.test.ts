@@ -1,5 +1,5 @@
-import { Substitution, Variable } from '../src/types';
-import { walk, assv, occurs, ext_s, unify, equals, call_fresh, disj, conj } from '../src/microKanren';
+import { Goal, Substitution, Variable } from '../src/types';
+import { walk, assv, occurs, ext_s, unify, equals, call_fresh, disj, conj, run } from '../src/microKanren';
 
 // Constants/Data Examples
 const sub0: Substitution = [];
@@ -7,6 +7,10 @@ const sub1: Substitution = [[0, 'a']];
 const sub2: Substitution = [[1, 'b']];
 const sub3: Substitution = [[1, 'a'], [0, 'b']];
 const sub4: Substitution = [[1, 0], [0, 'a']];
+const a_and_b: Goal = conj(
+  call_fresh((a) => equals(a, 7)),
+  call_fresh((b) => disj(equals(b, 5), equals(b, 6)))
+);
 
 describe('assv', () => {
   it('returns false on empty', () => {
@@ -179,3 +183,9 @@ describe('conj', () => {
     })([[], 0])).toEqual([[[[1, 'z'], [0, 1]], 2]]);
   });
 });
+
+describe('run', () => {
+  it('a-and-b', () => {
+    expect(run(1, a_and_b)).toEqual([[[[1, 5], [0, 7]], 2]])
+  })
+})
